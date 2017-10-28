@@ -13,6 +13,10 @@ class Demo3ViewController: UIViewController,UITableViewDelegate,UITableViewDataS
     var dataArr:[TodoModel] = []
     var tableView:UITableView?
     
+    override func viewWillAppear(_ animated: Bool) {
+        tableView?.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Todo List"
@@ -55,12 +59,20 @@ class Demo3ViewController: UIViewController,UITableViewDelegate,UITableViewDataS
     
     @objc func addTodo()
     {
-        let dvc = TodoDetailViewController()
+        let dvc = TodoDetailViewController(model: nil, isModify: false)
+//        dvc.addModel = {
+//            [unowned self](model:TodoModel) ->Void in
+//            self.dataArr.append(model)
+//            self.tableView?.reloadData()
+//        }
+        
         dvc.addModel = {
-            [unowned self](model:TodoModel) ->Void in
+            [unowned self] model in
             self.dataArr.append(model)
             self.tableView?.reloadData()
         }
+        
+        
         navigationController?.pushViewController(dvc, animated: true)
     }
     
@@ -91,6 +103,13 @@ class Demo3ViewController: UIViewController,UITableViewDelegate,UITableViewDataS
         return true
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let model = dataArr[indexPath.row]
+        let vc = TodoDetailViewController(model: model, isModify: true)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    
     //更新数据源
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let model = dataArr[sourceIndexPath.row]
@@ -112,6 +131,7 @@ class Demo3ViewController: UIViewController,UITableViewDelegate,UITableViewDataS
             tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
         }
     }
+    
     
 
 }

@@ -20,11 +20,30 @@ class TodoDetailViewController: UIViewController,UITextFieldDelegate {
     var model:TodoModel?
     var img = "yl"
     var tempBtn:UIButton?
+    var isModify:Bool = false
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
 
+//    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+//        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+//    }
+    
+    
+
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    init(model:TodoModel?, isModify:Bool)
+    {
+        self.isModify = isModify
+        self.model = model
+        super.init(nibName: nil, bundle: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         todoText.delegate = self
@@ -36,11 +55,28 @@ class TodoDetailViewController: UIViewController,UITextFieldDelegate {
         {
             let btn = btnArr[i]
             btn.setImage(gIMGName(name: (SimgArr[i] + "2")) , for: UIControlState.selected)
-            if  i == 0 {
-                tempBtn = btn
-                btn.isSelected = true
+            
+            if model != nil {
+                if model?.img == SimgArr[i] {
+                    tempBtn = btn
+                    btn.isSelected = true
+                }
+            }
+            else
+            {
+                if  i == 0 {
+                    tempBtn = btn
+                    btn.isSelected = true
+                }
             }
         }
+        
+        
+        if model != nil {
+            todoText.text = model?.todo
+            datePicker.date = getDate(time: model!.time!)
+        }
+        
         
     }
 
@@ -80,9 +116,19 @@ class TodoDetailViewController: UIViewController,UITextFieldDelegate {
             print("请输入事件~")
             return
         }
-        let dic = ["img":img,"time":getTime(),"todo":todoText.text!]
-        model = TodoModel(dict: dic)
-        addModel?(model!)
+        
+        if  isModify == true{
+            model?.time = getTime()
+            model?.img = img
+            model?.todo = todoText.text!
+        }
+        else
+        {
+            let dic = ["img":img,"time":getTime(),"todo":todoText.text!]
+            model = TodoModel(dict: dic)
+            addModel?(model!)
+        }
+        
         navigationController?.popViewController(animated: true)
     }
     
@@ -95,6 +141,12 @@ class TodoDetailViewController: UIViewController,UITextFieldDelegate {
         return formatter.string(from: date)
     }
     
+    func getDate(time:String) ->Date
+    {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: time)!
+    }
     
     
 
