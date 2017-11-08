@@ -12,7 +12,7 @@ class Demo4ViewController: BaseViewController {
 
     var img:UIImageView!
     
-    let ani = CABasicAnimation(keyPath: "transform.scale")
+    let ani = CAKeyframeAnimation(keyPath: "transform.scale")
     
     
     override func viewDidLoad() {
@@ -31,12 +31,12 @@ class Demo4ViewController: BaseViewController {
         imgView.image = gIMGName(name: "chengg")
         view.addSubview(imgView)
         
-        img = UIImageView(frame: CGRect(x: SCW/2 - 40, y: SCH/2 - 40, width: 80, height: 65))
+        img = UIImageView(frame: CGRect(x: SCW/2 - 40, y: SCH/2 - 40, width: 100, height: 80))
         img.image = gIMGName(name: "tw")
         view.layer.mask = img.layer
         
         ani.duration = 0.6
-        ani.toValue = 35
+        ani.values = [1,0.7,35]
         ani.fillMode = kCAFillModeForwards
         ani.isRemovedOnCompletion = false
 
